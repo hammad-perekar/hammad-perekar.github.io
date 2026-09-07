@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hammad Arif — Security Analyst | Privileged Access Management</title>
+<meta name="description" content="Hammad Arif Perekar — cybersecurity analyst in Aberdeen, UK. ARCON privileged access management across 2,000+ servers for Abu Dhabi Islamic Bank, MoroHub, eHosting DataFort and ADQCC. MSc Cybersecurity and Machine Learning, University of Aberdeen.">
+<meta name="theme-color" content="#07100C">
+<meta property="og:title" content="Hammad Arif — Security Analyst">
+<meta property="og:description" content="ARCON PAM across 2,000+ servers at ADIB, plus MoroHub, eHosting DataFort and ADQCC. 11 ARCON certifications. MSc Cybersecurity and ML, Aberdeen.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#07100C; --fg:#8FE3B0; --hot:#3BE07A; --amber:#FFB454;
+    --dim:#456B58; --alert:#FF6B6B; --glow:rgba(59,224,122,.35); --edge:rgba(143,227,176,.20);
+  }
+  body[data-theme="amber"]{
+    --bg:#0F0A04; --fg:#E8C08A; --hot:#FFB454; --amber:#7FE0B0;
+    --dim:#6E5636; --glow:rgba(255,180,84,.30); --edge:rgba(232,192,138,.20);
+  }
+  body[data-theme="ice"]{
+    --bg:#060D14; --fg:#9EC9E8; --hot:#5AC8FA; --amber:#FFB454;
+    --dim:#3D5A70; --glow:rgba(90,200,250,.30); --edge:rgba(158,201,232,.20);
+  }
+  body[data-theme="paper"]{
+    --bg:#F2F0E9; --fg:#22201B; --hot:#1F6F43; --amber:#9A5B10;
+    --dim:#7A756A; --glow:rgba(0,0,0,0); --edge:rgba(34,32,27,.22);
+  }
+  body[data-theme="paper"] .scan,body[data-theme="paper"] .vig{display:none}
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--fg);
+    font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:15px;line-height:1.62;text-shadow:0 0 8px var(--glow);overflow:hidden;
+    transition:background .3s ease,color .3s ease;
+  }
+  @media (max-width:640px){ body{font-size:13.5px} }
+
+  #rain{position:fixed;inset:0;z-index:0;opacity:0;transition:opacity .8s ease;pointer-events:none}
+  #rain.on{opacity:.30}
+  .scan{position:fixed;inset:0;z-index:5;pointer-events:none;
+    background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.22) 2px 4px);
+    mix-blend-mode:multiply;opacity:.55}
+  .vig{position:fixed;inset:0;z-index:4;pointer-events:none;
+    background:radial-gradient(115% 90% at 50% 45%,rgba(0,0,0,0) 45%,rgba(0,0,0,.72) 100%)}
+  @media (prefers-reduced-motion:no-preference){
+    .vig{animation:flicker 7s infinite steps(1)}
+    @keyframes flicker{0%,97%{opacity:1}97.5%{opacity:.93}98%{opacity:1}99%{opacity:.96}}
+  }
+
+  .status{position:fixed;top:0;left:0;right:0;z-index:6;display:flex;justify-content:space-between;gap:1rem;
+    padding:.55rem 1.1rem;border-bottom:1px solid var(--edge);background:var(--bg);
+    font-size:.8rem;color:var(--dim);letter-spacing:.02em}
+  .status b{color:var(--hot);font-weight:500}
+  .status .sm{display:none}
+  @media (max-width:560px){ .status .lg{display:none} .status .sm{display:inline} }
+
+  #screen{position:absolute;inset:2.4rem 0 auto 0;height:calc(100dvh - 2.4rem - var(--dock,4.6rem));
+    overflow-y:auto;overscroll-behavior:contain;padding:1.4rem 1.1rem 1rem;z-index:2;
+    scrollbar-width:thin;scrollbar-color:var(--dim) transparent}
+  #screen::-webkit-scrollbar{width:8px}
+  #screen::-webkit-scrollbar-thumb{background:var(--edge)}
+  .inner{max-width:96ch;margin:0 auto}
+
+  .banner{color:var(--hot);white-space:pre;font-size:clamp(5.2px,1.82vw,12px);line-height:1.12;margin:0 0 .9rem}
+  .tagline{color:var(--dim);margin:0 0 1.4rem}
+  .tagline b{color:var(--fg);font-weight:400}
+
+  .line{white-space:pre-wrap;word-break:break-word;margin:0}
+  .out{margin:.12rem 0}
+  .dim{color:var(--dim)} .hot{color:var(--hot)} .amb{color:var(--amber)} .alert{color:var(--alert)}
+  .head{color:var(--hot);font-weight:600;margin-top:.9rem}
+  .rule{color:var(--dim)}
+  .para{white-space:normal;max-width:74ch;margin:.55rem 0}
+  .para.lead{color:var(--fg)}
+  .echo{margin:1.1rem 0 .35rem}
+  .echo .p{color:var(--hot)}
+  a{color:var(--amber);text-decoration:none;border-bottom:1px dotted currentColor}
+  a:hover{color:var(--fg)}
+  :focus-visible{outline:2px solid var(--hot);outline-offset:2px}
+
+  .fetch{display:flex;gap:1.6rem;flex-wrap:wrap;margin:.4rem 0}
+  .fetch pre{margin:0;color:var(--hot);white-space:pre;font-size:.86em;line-height:1.15}
+  .fetch .kv{min-width:min(42ch,100%)}
+  .fetch .kv span{color:var(--hot)}
+  .bar{display:inline-block;color:var(--hot)}
+  .bar i{color:var(--dim);font-style:normal}
+
+  #inputLine{position:relative;display:flex;align-items:baseline;gap:.55rem;margin-top:.35rem}
+  .prompt{color:var(--hot);white-space:nowrap;flex:0 0 auto}
+  .typed{white-space:pre-wrap;word-break:break-all}
+  .ghost{color:var(--dim);opacity:.6;white-space:pre}
+  .caret{display:inline-block;width:.62em;height:1.02em;background:var(--hot);vertical-align:-.16em;
+    box-shadow:0 0 10px var(--glow)}
+  @media (prefers-reduced-motion:no-preference){ .caret{animation:blink 1.05s steps(1) infinite} }
+  @keyframes blink{50%{opacity:0}}
+  #cmd{position:absolute;inset:0;width:100%;opacity:0;border:0;background:transparent;
+    font:inherit;color:transparent;padding:0;margin:0;-webkit-appearance:none}
+
+  .dock{position:fixed;bottom:0;left:0;right:0;z-index:6;background:var(--bg);
+    border-top:1px solid var(--edge);padding:.6rem 1.1rem .75rem}
+  .dock .inner{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+  .dock small{color:var(--dim);font-size:.76rem;flex-basis:100%;margin-bottom:.15rem}
+  .chip{font:inherit;font-size:.82rem;color:var(--fg);background:transparent;border:1px solid var(--edge);
+    padding:.22rem .62rem;cursor:pointer;transition:border-color .18s,color .18s,background .18s}
+  .chip:hover{border-color:var(--hot);color:var(--hot);background:rgba(127,224,160,.07)}
+
+  .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  noscript .fallback{display:block;padding:5rem 1.2rem;max-width:70ch;margin:0 auto;position:relative;z-index:9}
+</style>
+</head>
+<body data-theme="green">
+
+<canvas id="rain" aria-hidden="true"></canvas>
+<div class="scan" aria-hidden="true"></div>
+<div class="vig" aria-hidden="true"></div>
+
+<div class="status">
+  <span class="lg">session <b>hammad@portfolio</b> · shell secured · <span id="uptime">up 0s</span></span>
+  <span class="sm"><b>hammad@portfolio</b></span>
+  <span id="clock">--:--:-- GST</span>
+</div>
+
+<div id="screen" tabindex="-1"><div class="inner" id="feed"></div></div>
+
+<div class="dock">
+  <div class="inner">
+    <small>type a command, or tap one:</small>
+    <button class="chip" data-cmd="help">help</button>
+    <button class="chip" data-cmd="neofetch">neofetch</button>
+    <button class="chip" data-cmd="work">work</button>
+    <button class="chip" data-cmd="projects">projects</button>
+    <button class="chip" data-cmd="open adib">open adib</button>
+    <button class="chip" data-cmd="timeline">timeline</button>
+    <button class="chip" data-cmd="skills">skills</button>
+    <button class="chip" data-cmd="certs">certs</button>
+    <button class="chip" data-cmd="study">study</button>
+    <button class="chip" data-cmd="contact">contact</button>
+    <button class="chip" data-cmd="clear">clear</button>
+  </div>
+</div>
+
+<div class="sr">
+  <h1>Hammad Arif Perekar — Cybersecurity Analyst, Privileged Access Management</h1>
+  <p>Based in Aberdeen, United Kingdom. Security analyst at Arcontech Solutions, Mumbai, from July 2023 to December 2025, delivering ARCON Privileged Access Management implementations for banking, government and cloud-hosting clients across the UAE. Deployed ARCON PAM across 2,000+ servers at Abu Dhabi Islamic Bank spanning Production, Disaster Recovery and UAT, plus rollouts for MoroHub (750 endpoint users), eHosting DataFort and ADQCC.</p>
+  <p>Configured just-in-time, time-bound and permanent privileged access, password vaulting and automated rotation, video session logging, administrator freeze and unfreeze controls, and centralised monitoring dashboards. Built MS-SQL databases, IIS web tiers and secure gateway VPN servers on CentOS, integrated with Active Directory, SAML federation and multi-factor authentication. Ran SOC operations including SIEM threat monitoring, vulnerability assessment and alert investigation.</p>
+  <p>Holds eleven ARCON University certifications including ARCON PAM Administrator, Professional and Associate, plus the Google Cybersecurity Professional Certificate. Currently studying an MSc in Cybersecurity and Machine Learning at the University of Aberdeen, January 2026 to May 2027. BTech Mechatronics, First Class with Honours, Ajeenkya DY Patil University, Pune.</p>
+  <p>Contact: <a href="mailto:hammadperekar27@gmail.com">hammadperekar27@gmail.com</a>, UK <a href="tel:+447343042363">+44 7343 042363</a>, Oman <a href="tel:+96891477729">+968 9147 7729</a>, <a href="https://www.linkedin.com/in/hammad-perekar">LinkedIn</a>.</p>
+</div>
+<noscript><div class="fallback">
+  <h1>Hammad Arif Perekar — Cybersecurity Analyst</h1>
+  <p>This portfolio runs as an interactive terminal and needs JavaScript. The short version: I deliver ARCON Privileged Access Management for banks, government bodies and cloud providers — including a rollout across 2,000+ servers at Abu Dhabi Islamic Bank, plus MoroHub, eHosting DataFort and ADQCC. Now based in Aberdeen, reading for an MSc in Cybersecurity and Machine Learning, available May 2027.</p>
+  <p>Email <a href="mailto:hammadperekar27@gmail.com">hammadperekar27@gmail.com</a>, call <a href="tel:+447343042363">+44 7343 042363</a> (UK) or <a href="tel:+96891477729">+968 9147 7729</a> (Oman), or find me on <a href="https://www.linkedin.com/in/hammad-perekar">LinkedIn</a>.</p>
+</div></noscript>
+
+<script>
+(function(){
+"use strict";
+const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const feed = document.getElementById('feed');
+const screenEl = document.getElementById('screen');
+const START = Date.now();
+
+const BANNER =
+"██╗  ██╗ █████╗ ███╗   ███╗███╗   ███╗ █████╗ ██████╗ \n"+
+"██║  ██║██╔══██╗████╗ ████║████╗ ████║██╔══██╗██╔══██╗\n"+
+"███████║███████║██╔████╔██║██╔████╔██║███████║██║  ██║\n"+
+"██╔══██║██╔══██║██║╚██╔╝██║██║╚██╔╝██║██╔══██║██║  ██║\n"+
+"██║  ██║██║  ██║██║ ╚═╝ ██║██║ ╚═╝ ██║██║  ██║██████╔╝\n"+
+"╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝ ";
+
+const LOCK =
+"      ┌───────────┐\n"+
+"     ╱             ╲\n"+
+"    │   ┌───────┐   │\n"+
+"    │   │  ▓▓▓  │   │\n"+
+"  ┌─┴───┴───────┴───┴─┐\n"+
+"  │  ███   ▓▓▓   ███  │\n"+
+"  │      ┌─────┐      │\n"+
+"  │      │  ●  │      │\n"+
+"  │      └──┬──┘      │\n"+
+"  └─────────┴─────────┘";
+
+const L=(t,c)=>({t:t||"",c:c||""});
+const R=(html)=>({t:html,c:"raw"});
+const P=(t)=>({t:t,c:"para"});
+const RULE=L("──────────────────────────────────────────────────────","rule");
+const esc=s=>s.replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+
+/* ---------------- content ---------------- */
+const DATA = {
+help:[
+  L("commands","head"), RULE,
+  L("  identity     whoami · about · neofetch · whois"),
+  L("  history      work · timeline · projects · open <name>"),
+  L("  learning     study · certs · now"),
+  L("  capability   skills · stack · vault · pam"),
+  L("  reach        contact · netstat · email"),
+  L(""),
+  L("  files        ls · tree · cat <file>"),
+  L("  session      history · uptime · date · clear"),
+  L("  display      theme <green|amber|ice|paper> · matrix · banner"),
+  L(""),
+  L("tab completes · ↑↓ walks history · ctrl+L clears","dim")
+],
+whoami:[
+  L("hammad arif perekar — cybersecurity analyst, privileged access","hot"),
+  L("aberdeen, united kingdom · msc candidate · available may 2027","dim")
+],
+about:[
+  L("about","head"), RULE,
+  P("I work on the least glamorous and most consequential question in enterprise security: who is allowed to hold the keys, and what happens the moment they use them."),
+  P("For two and a half years at Arcontech I delivered ARCON Privileged Access Management for banking, government and cloud-hosting clients across the UAE. The largest of those ran across more than two thousand servers at Abu Dhabi Islamic Bank. The work covered the whole stack — vaulting and rotating privileged credentials, tiering access into just-in-time, time-bound and permanent, recording privileged sessions on video, and building the MS-SQL, IIS and Windows Server layers underneath it all."),
+  P("Deployment was only half of the job. The other half was the operations desk: reading what the alerts actually said, chasing the ones that mattered, and closing the rest without noise. Vulnerability assessments, firewall investigation, alert triage — the unglamorous daily work that keeps a deployment meaningful after go-live."),
+  P("An engineering degree in mechatronics came first, which is where the Python and C came from. I am now in Aberdeen reading for an MSc in Cybersecurity and Machine Learning, and available for full-time work from May 2027."),
+  L(""),
+  L("run  now  for the current state  ·  pam  for what the work is","dim")
+],
+now:[
+  L("currently","head"), RULE,
+  L("  ▸ based in aberdeen, united kingdom","hot"),
+  L("  ▸ msc cybersecurity and machine learning, university of aberdeen"),
+  L("    january 2026 → may 2027 · semester two","dim"),
+  L("  ▸ UK student visa with permitted part-time work rights;"),
+  L("    eligible for the graduate route on completion","dim"),
+  L(""),
+  L("  available may 2027 for full-time roles in the UK.","hot"),
+  L("  open now to part-time SOC work, placements and gulf roles.","hot"),
+  L("  targets: PAM · IAM · security operations  ·  see  contact")
+],
+work:[
+  L("work","head"), RULE,
+  L("security analyst","hot"),
+  L("arcontech solutions pvt ltd · mumbai · jul 2023 → dec 2025","dim"),
+  L("ARCON privileged access management · banking, government, cloud","dim"),
+  L(""),
+  L("  delivery"),
+  L("  › responsible for end-to-end delivery of ARCON PAM"),
+  L("    implementations, from install through UAT to handover"),
+  L("  › deployed across estates of up to 2,000+ servers, covering"),
+  L("    production, disaster recovery and UAT environments"),
+  L("  › configured tiered privileged access — just-in-time (one-time),"),
+  L("    time-bound and permanent provisioning"),
+  L("  › password vaulting and automated rotation, video session"),
+  L("    logging, administrator freeze / unfreeze controls"),
+  L("  › centralised monitoring dashboards giving security teams live"),
+  L("    visibility of privileged activity"),
+  L(""),
+  L("  infrastructure"),
+  L("  › MS-SQL database configuration and web applications published"),
+  L("    on IIS across windows server"),
+  L("  › secure gateway (VPN) servers implemented on CentOS"),
+  L("  › integration with active directory, SAML federation and"),
+  L("    multi-factor authentication"),
+  L(""),
+  L("  operations"),
+  L("  › daily threat monitoring across SIEM and firewall consoles"),
+  L("  › recurring vulnerability assessment and remediation tracking"),
+  L("  › alert triage and investigation, escalation where warranted"),
+  L(""),
+  L("  client-facing"),
+  L("  › primary technical contact for client stakeholders through UAT"),
+  L("  › critical issue resolution inside tight change windows"),
+  L("  › runbooks and handover documentation at close of deployment")
+],
+timeline:[
+  L("timeline","head"), RULE,
+  L("  2027  ○  msc completes · available for full-time work · may","dim"),
+  L("        │"),
+  L("  2026  ●  moved to aberdeen, UK — msc cybersecurity and ML","hot"),
+  L("        │  university of aberdeen, from january","dim"),
+  L("        │"),
+  L("  2025  ●  ADIB — ARCON PAM across 2,000+ servers","hot"),
+  L("        │  eleven ARCON university certifications","dim"),
+  L("        │  left arcontech in december","dim"),
+  L("        │"),
+  L("  2024  ●  morohub, ehosting datafort and ADQCC deployments","hot"),
+  L("        │"),
+  L("  2023  ●  joined arcontech solutions as security analyst · july","hot"),
+  L("        │  btech mechatronics, first class with honours · may","dim"),
+  L("        │"),
+  L("  2019  ●  finished school at indian school muscat","hot")
+],
+projects:[
+  L("deployments","head"), RULE,
+  L("  [1] abu dhabi islamic bank            2,000+ servers","hot"),
+  L("      ARCON PAM · prod, DR and UAT · phased 3-month migration","dim"),
+  L("  [2] morohub                           750 endpoint users","hot"),
+  L("      end-to-end PAM rollout, national cloud provider","dim"),
+  L("  [3] ehosting datafort","hot"),
+  L("      PAM infrastructure and web tier deployment","dim"),
+  L("  [4] adqcc","hot"),
+  L("      privileged access controls, government quality body","dim"),
+  L(""),
+  L("run  open adib  ·  open morohub  ·  open ehdf  ·  open adqcc","dim"),
+  L("not sure what PAM is? run  pam  first.","dim")
+],
+adib:[
+  L("case study — abu dhabi islamic bank","head"), RULE,
+  L("ARCON privileged access management · 2025","dim"),
+  L(""),
+  L("  scale        2,000+ servers","hot"),
+  L("  environments production · disaster recovery · UAT","hot"),
+  L("  rollout      phased over three months, in controlled waves","hot"),
+  L(""),
+  P("Abu Dhabi Islamic Bank runs a server estate of more than two thousand machines. Every one of them carries administrative accounts — the credentials that can change a configuration, read a database, or switch off the logging that would record either. Before a privileged access system exists, those credentials tend to live in spreadsheets, deployment scripts and engineers' heads. They get shared, they rarely change, and when someone leaves the organisation they often keep working. Closing that exposure was the point of this project."),
+  P("I was responsible for the end-to-end delivery: installation, configuration, testing and handover. Every privileged credential across the estate was moved into the ARCON vault, and the vault was set to rotate them automatically on a schedule. The practical effect is that no engineer knows a production password any more. They request access, the vault issues it, and the credential is changed again afterwards — so a password used last month is already dead."),
+  P("Access itself was tiered rather than granted flat. Some accounts were configured for just-in-time access, issued once for a specific task and expiring immediately after. Others were time-bound, valid only for a defined window. A small number stayed permanent where a service genuinely required it. The governing principle is least privilege: nobody holds standing access to something they are not using at that moment, because standing access is what an attacker inherits when they compromise an account."),
+  P("Everything that happens under a privileged session is recorded on video, so an investigation later can watch exactly what was typed rather than reconstruct it from fragmentary logs. Administrator accounts can be frozen and unfrozen centrally, which matters during an incident when the priority is to stop activity now and ask questions afterwards. Above all of it, monitoring dashboards give the security team a live view of who currently holds privileged access and what they are doing with it."),
+  P("Underneath sits the infrastructure I built and configured: MS-SQL databases holding the vault and audit data, the web console published on IIS across Windows Server, and integration with Active Directory so identities stayed consistent with the bank's existing directory. Authentication into the vault runs through SAML federation with multi-factor authentication, on the reasoning that a system holding every privileged credential in the bank should not itself be reachable with a single password."),
+  P("The whole stack was deployed three times over — production, disaster recovery, and a user acceptance environment — each stood up and validated independently, then kept in step through testing and cutover. Rather than a single switchover, the migration ran phased across three months, moving users into the new environment in controlled waves, so banking operations were never interrupted by the change. I owned issue resolution across all three environments, including the escalations that surfaced during user acceptance testing, where real administrators meet the new workflow for the first time and find the edge cases nobody planned for."),
+  P("A bank's privileged accounts are the shortest path to everything else it owns. This work turned that path into a monitored, time-limited and fully recorded one."),
+  L(""),
+  L("new to PAM? run  pam  for the plain-english version.","dim")
+],
+morohub:[
+  L("deployment — morohub","head"), RULE,
+  L("national cloud and managed services provider, UAE","dim"),
+  L(""),
+  L("  scale        750 endpoint users","hot"),
+  L(""),
+  P("MoroHub is a national-scale cloud and managed services provider, which makes its privileged accounts unusually consequential. A bank's administrators can reach that bank's systems. A cloud provider's administrators can reach infrastructure belonging to every customer hosted on the platform. The blast radius of a single compromised admin credential is therefore an order of magnitude larger, and the case for vaulting those credentials is correspondingly stronger."),
+  P("I delivered the ARCON PAM rollout end to end across an estate of 750 endpoint users. That covered the vault infrastructure itself, the MS-SQL database layer holding credentials and audit records, and the web console published on IIS. Privileged sessions across the user estate were brought under monitoring, so that administrative activity is attributable to a named person rather than to a shared account that a dozen engineers happen to know the password for."),
+  P("The work followed the same shape as the banking deployments — install, configure, test, hand over — with the scale expressed in users rather than servers, because the exposure at a service provider sits with the people holding the access."),
+  L(""),
+  L("more detail on request — run  contact","dim")
+],
+ehdf:[
+  L("deployment — ehosting datafort","head"), RULE,
+  L("managed hosting and security services, UAE","dim"),
+  L(""),
+  P("eHosting DataFort provides managed hosting and security services, meaning its own engineers hold administrative access to customer environments. That is a position of significant trust, and the controls demonstrating it is being handled properly are part of what the company sells. Privileged access management is not only a defensive measure in that setting — it is evidence to customers that their infrastructure is being administered under supervision."),
+  P("I built the ARCON PAM infrastructure and deployed the web tier: MS-SQL database configuration, application server setup on Windows Server, and the management console published on IIS. That stack is what everything else in a PAM deployment rests on — if the database or the web tier is fragile, the vault protecting every other credential in the estate becomes the weakest thing in the building."),
+  L(""),
+  L("more detail on request — run  contact","dim")
+],
+adqcc:[
+  L("deployment — ADQCC","head"), RULE,
+  L("abu dhabi quality and conformity council · government","dim"),
+  L(""),
+  P("ADQCC is the Abu Dhabi Quality and Conformity Council, a government body responsible for standards and conformity assessment. Public-sector deployments carry a requirement that commercial ones sometimes do not: the need to demonstrate, to an auditor rather than a customer, that administrative access to public systems is controlled and accounted for. The audit trail is not a by-product of the system — it is a large part of why the system is bought."),
+  P("I deployed privileged access controls across the estate, vaulting administrative credentials, enabling session logging, and tiering access so that administrator rights are held for as long as a task requires and no longer. The outcome is a record: for any privileged action taken on a government system, there is a named person, a time window, and a session log attached to it."),
+  L(""),
+  L("more detail on request — run  contact","dim")
+],
+pam:[
+  L("what privileged access management actually is","head"), RULE,
+  P("Most accounts in an organisation are ordinary. They can read email, open documents, use the applications someone has been given. A small number are not ordinary: the domain administrator, the database owner, the root account on a server, the service account a payment system runs under. These are privileged accounts, and they can change or destroy the systems they sit on — including the logs that would record it."),
+  P("The problem is that these accounts are traditionally managed badly, not through negligence but through convenience. Passwords get shared between engineers because two people need them at 3am. They get written into deployment scripts. They rarely change, because changing them breaks things. And because they are shared, an action taken with one cannot be attributed to a person — the log says the administrator account did it, which tells you nothing."),
+  P("A privileged access management system fixes this by taking the credentials away from people entirely and putting them in a vault. When an engineer needs access, they request it, the vault grants it for a defined purpose and period, and the password is rotated afterwards so what they saw is no longer valid. The session is recorded. The request is logged against their name. Access can be revoked centrally in seconds."),
+  P("What that buys an organisation is threefold: attackers who steal a credential find it already expired; insiders act in the knowledge that sessions are recorded; and auditors get a defensible answer to the question of who could do what, and when. This is the work I have spent three years doing — for a bank, a national cloud provider, a hosting company and a government body."),
+  L(""),
+  L("see it in practice:  open adib","dim")
+],
+vault:[
+  L("vault status","head"), RULE,
+  L("  safe                        scale        env          state"),
+  L("  ─────────────────────────────────────────────────────────","rule"),
+  L("  adib/password-vault         2,000+ srv   prod·dr·uat  SEALED","hot"),
+  L("  adib/session-video-log      2,000+ srv   prod·dr·uat  SEALED","hot"),
+  L("  morohub/pam-core            750 users    prod         SEALED","hot"),
+  L("  ehdf/pam-web                —            prod         SEALED","hot"),
+  L("  adqcc/priv-access           —            prod         SEALED","hot"),
+  L(""),
+  L("credentials vaulted and rotated. no standing access.","dim")
+],
+study:[
+  L("study","head"), RULE,
+  L("msc cybersecurity and machine learning","hot"),
+  L("university of aberdeen, UK · jan 2026 → may 2027 · semester two","dim"),
+  L("  modules completed"),
+  L("  › digital forensics and incident management"),
+  L("  › ethical hacking and web security"),
+  L("  › software agents and multi-agent systems"),
+  L("  › natural language generation"),
+  L(""),
+  L("btech mechatronics — first class with honours","hot"),
+  L("ajeenkya dy patil university, pune · aug 2019 → may 2023","dim"),
+  L("  control systems, electronics and programming — the origin of"),
+  L("  the C, C++ and python"),
+  L(""),
+  L("indian school muscat · science stream, CBSE","hot"),
+  L("  grade 12 · 71%     grade 10 · 8.0 GPA","dim")
+],
+skills:[
+  L("skills","head"), RULE,
+  L("  privileged access   ARCON PAM · password vaulting · automated"),
+  L("                      rotation · just-in-time, time-bound and"),
+  L("                      permanent access · privileged session"),
+  L("                      monitoring and video recording · account"),
+  L("                      freeze / suspension · least privilege"),
+  L("  identity            active directory · SAML federation · MFA ·"),
+  L("                      role-based access control"),
+  L("  platforms           windows server · linux / CentOS · IIS ·"),
+  L("                      MS-SQL · secure gateway (VPN)"),
+  L("  operations          SIEM monitoring · firewall analysis ·"),
+  L("                      vulnerability assessment · alert triage ·"),
+  L("                      incident investigation"),
+  L("  code and data       python · C · C++ · SQL · power BI"),
+  L("  cloud               AWS · OCI (certified upskilling)"),
+  L("  practice            digital forensics · web security testing"),
+  L(""),
+  L("run  stack  for the deployment view","dim")
+],
+stack:[
+  L("deployment stack","head"), RULE,
+  L("   ┌──────────────────────────────┐"),
+  L("   │  AD · SAML · MFA             │   identity","hot"),
+  L("   ├──────────────────────────────┤"),
+  L("   │  ARCON PAM console  ·  IIS   │   web tier","hot"),
+  L("   ├──────────────────────────────┤"),
+  L("   │  vault · rotation · session  │   application tier","hot"),
+  L("   │  video log · dashboards      │","hot"),
+  L("   ├──────────────────────────────┤"),
+  L("   │  MS-SQL                      │   data tier","hot"),
+  L("   ├──────────────────────────────┤"),
+  L("   │  windows server · CentOS     │   host + VPN gateway","hot"),
+  L("   └──────────────────────────────┘"),
+  L(""),
+  L("  replicated across  production · disaster recovery · UAT","dim"),
+  L("  monitored from     SIEM + firewall consoles","dim")
+],
+certs:[
+  L("certifications","head"), RULE,
+  L("ARCON university — privileged access management","hot"),
+  L("  ▸ ARCON PAM Administrator            ID 01642 · jul 2025"),
+  L("  ▸ ARCON PAM Professional             ID 02435 · nov 2025"),
+  L("  ▸ ARCON PAM Associate                ID 02436 · nov 2025"),
+  L(""),
+  L("ARCON university — converged identity","hot"),
+  L("  ▸ Converged Identity Fundamentals    ID 02434 · nov 2025"),
+  L("  ▸ CI — PAM Connectors and SAML       ID 02431 · nov 2025"),
+  L("  ▸ CI — Complete Walkthrough          ID 02430 · nov 2025"),
+  L("  ▸ EPM Complete Walkthrough           ID 02428 · nov 2025"),
+  L("  ▸ Multi-Factor Authentication        ID 02427 · nov 2025"),
+  L(""),
+  L("ARCON university — cloud and data","hot"),
+  L("  ▸ AWS Upskilling                     ID 02429 · nov 2025"),
+  L("  ▸ OCI Installations                  ID 02410 · nov 2025"),
+  L("  ▸ Power BI                           ID 02432 · nov 2025"),
+  L(""),
+  L("foundational","hot"),
+  R("  ▸ Google Cybersecurity Professional Certificate · jun 2026 · <a href='https://coursera.org/verify/professional-cert/CY7DV79M5LN9' target='_blank' rel='noopener'>verify</a>"),
+  L("  ▸ Cisco — Introduction to Cybersecurity"),
+  L("  ▸ Cisco — Ethical Hacking"),
+  L("  ▸ Introduction to SQL and MySQL Databases"),
+  L("  ▸ Fundamentals of Networking"),
+  L(""),
+  L("eleven ARCON university certifications in total.","dim")
+],
+contact:[
+  L("contact","head"), RULE,
+  R("  email      <a href='mailto:hammadperekar27@gmail.com'>hammadperekar27@gmail.com</a>"),
+  R("  phone UK   <a href='tel:+447343042363'>+44 7343 042363</a>"),
+  R("  phone OM   <a href='tel:+96891477729'>+968 9147 7729</a>"),
+  R("  linkedin   <a href='https://www.linkedin.com/in/hammad-perekar' target='_blank' rel='noopener'>hammad-perekar</a>"),
+  L(""),
+  L("  based      aberdeen, united kingdom"),
+  L("  home       muscat, oman"),
+  L("  worked in  mumbai, india · UAE clients","dim"),
+  L("  status     UK student visa · graduate route eligible 2027","dim"),
+  L("  also       omani driving licence","dim"),
+  L(""),
+  L("open to PAM, IAM and security operations roles.","hot"),
+  L("run  email  to copy my address to your clipboard.","dim")
+],
+netstat:[
+  L("active channels","head"), RULE,
+  L("  proto  channel              state       endpoint"),
+  L("  ─────────────────────────────────────────────────────────","rule"),
+  R("  smtp   email                <span class='hot'>LISTENING</span>   <a href='mailto:hammadperekar27@gmail.com'>hammadperekar27@gmail.com</a>"),
+  R("  tel    phone · UK          <span class='hot'>LISTENING</span>   <a href='tel:+447343042363'>+44 7343 042363</a>"),
+  R("  tel    phone · oman        <span class='hot'>LISTENING</span>   <a href='tel:+96891477729'>+968 9147 7729</a>"),
+  R("  https  linkedin             <span class='hot'>LISTENING</span>   <a href='https://www.linkedin.com/in/hammad-perekar' target='_blank' rel='noopener'>/in/hammad-perekar</a>"),
+  L("  ssh    recruiter spam       DROPPED","dim")
+],
+whois:[
+  L("whois hammad","head"), RULE,
+  L("  name           hammad arif perekar"),
+  L("  role           cybersecurity analyst"),
+  L("  speciality     privileged access management · ARCON"),
+  L("  last org       arcontech solutions pvt ltd"),
+  L("  tenure         2023-07 → 2025-12"),
+  L("  location       aberdeen, GB"),
+  L("  home           muscat, OM"),
+  L("  studying       msc cybersecurity + ML, aberdeen · → 2027-05"),
+  L("  right to work  UK student visa · graduate route eligible","hot"),
+  L("  status         ACTIVE","hot"),
+  L("  availability   OPEN TO OFFERS · full-time from 2027-05","hot"),
+  L("  updated        2026-09")
+],
+cv:[
+  L("cv","head"), RULE,
+  L("no file linked yet.","alert"),
+  L("drop resume.pdf beside index.html and swap this block for a"),
+  L("download link — one line in the script."),
+  L("meanwhile: run  contact  and email me, I'll send it over.","dim")
+],
+ls:[
+  L("  about.txt      work.log       projects/     study.txt"),
+  L("  skills.conf    certs.txt      contact.card  vault.db"),
+  L(""),
+  L("try  cat about.txt  or  tree","dim")
+],
+tree:[
+  L("  hammad@portfolio:~","hot"),
+  L("  ├── about.txt"),
+  L("  ├── work.log"),
+  L("  ├── projects/"),
+  L("  │   ├── adib.txt        ← 2,000+ servers","dim"),
+  L("  │   ├── morohub.txt     ← 750 users","dim"),
+  L("  │   ├── ehdf.txt"),
+  L("  │   └── adqcc.txt"),
+  L("  ├── study.txt"),
+  L("  ├── skills.conf"),
+  L("  ├── certs.txt           ← 11 ARCON + google","dim"),
+  L("  ├── contact.card"),
+  L("  └── vault.db            ← sealed","dim")
+],
+sudo:[
+  L("[sudo] password for guest:","dim"),
+  L("access denied.","alert"),
+  L("privilege escalation is rather the thing I get paid to prevent.","dim")
+],
+exit:[
+  L("connection to hammad@portfolio closed.","dim"),
+  L("…except it isn't. still here. try  contact  before you go.","hot")
+]
+};
+
+const ALIASES={
+  "?":"help",man:"help",commands:"help",menu:"help",
+  who:"whoami",id:"whoami",hi:"whoami",hello:"whoami",hey:"whoami",
+  info:"about",bio:"about",summary:"about",
+  experience:"work",job:"work",career:"work","work.log":"work",
+  education:"study",school:"study",degree:"study",msc:"study",aberdeen:"study",
+  project:"projects",clients:"projects",portfolio:"projects",deployments:"projects",
+  tech:"skills",tools:"skills","skills.conf":"skills",
+  certifications:"certs",certificates:"certs","certs.txt":"certs",
+  reach:"contact",hire:"contact","contact.card":"contact",
+  resume:"cv",download:"cv",
+  "about.txt":"about","study.txt":"study","vault.db":"vault",
+  dir:"ls",quit:"exit",logout:"exit",current:"now",status:"now",
+  arcon:"certs",explain:"pam",privilege:"pam",visa:"now",available:"now",location:"now",uk:"now",
+  phone:"contact",linkedin:"contact",adib:"adib",morohub:"morohub",adqcc:"adqcc",ehdf:"ehdf"
+};
+const NAMES=[...new Set(Object.keys(DATA).concat(Object.keys(ALIASES),
+  ["clear","banner","theme","matrix","history","uptime","date","open","cat","email","pwd","uname"]))];
+
+/* ---------------- rendering ---------------- */
+let typing=false, skip=false;
+const el=c=>{const d=document.createElement('div');d.className='line out '+(c||'');return d;};
+const toBottom=()=>{screenEl.scrollTop=screenEl.scrollHeight;};
+
+function drawBanner(){
+  const b=document.createElement('pre');b.className='banner';b.textContent=BANNER;feed.appendChild(b);
+  const t=document.createElement('p');t.className='tagline';
+  t.innerHTML="cybersecurity analyst · <b>privileged access management</b> · aberdeen, UK";
+  feed.appendChild(t);
+}
+
+function typeLines(lines,done){
+  typing=true;skip=false;let i=0;
+  (function nextLine(){
+    if(i>=lines.length){typing=false;done&&done();return;}
+    const ln=lines[i++];
+    const node=el(ln.c==='raw'?'':ln.c);
+    feed.appendChild(node);
+    if(ln.c==='raw'||still||skip||!ln.t){
+      if(ln.c==='raw') node.innerHTML=ln.t; else node.textContent=ln.t;
+      toBottom();return nextLine();
+    }
+    let j=0;const step=ln.t.length>120?4:1;
+    (function ch(){
+      if(skip){node.textContent=ln.t;toBottom();return nextLine();}
+      j=Math.min(ln.t.length,j+step);
+      node.textContent=ln.t.slice(0,j);
+      if(j<ln.t.length) setTimeout(ch,3);
+      else {toBottom();setTimeout(nextLine,12);}
+    })();
+    toBottom();
+  })();
+}
+
+/* neofetch card */
+function neofetch(){
+  const up=uptimeStr();
+  const rows=[
+    ["name","hammad arif perekar"],
+    ["role","cybersecurity analyst · privileged access"],
+    ["location","aberdeen, united kingdom"],
+    ["home","muscat, oman"],
+    ["last org","arcontech solutions · 2023–2025"],
+    ["studying","msc cybersecurity + ML, aberdeen"],
+    ["available","may 2027 · UK graduate route"],
+    ["product","ARCON PAM"],
+    ["os","windows server · linux / CentOS"],
+    ["db / web","MS-SQL · IIS"],
+    ["identity","active directory · SAML · MFA"],
+    ["langs","python · C · C++ · SQL"],
+    ["clients","ADIB 2,000+ srv · morohub 750 · ehdf · ADQCC"],
+    ["certs","11 ARCON university · google cybersecurity"],
+    ["uptime",up],
+    ["status","open to offers"]
+  ].map(([k,v])=>"<span>"+k.padEnd(11)+"</span> "+esc(v)).join("\n");
+  return [R("<div class='fetch'><pre>"+LOCK+"</pre><div class='kv line'>"
+    +"<span>hammad</span>@<span>portfolio</span>\n"
+    +"─────────────────────────────\n"+rows+"</div></div>")];
+}
+
+/* ---------------- session ---------------- */
+const hist=[];let hIdx=-1;
+const uptimeStr=()=>{
+  const s=Math.floor((Date.now()-START)/1000);
+  return s<60?s+"s":Math.floor(s/60)+"m "+(s%60)+"s";
+};
+
+function echo(cmd){
+  const d=document.createElement('div');d.className='line echo';
+  d.innerHTML='<span class="p">hammad@portfolio:~$</span> '+esc(cmd);
+  feed.appendChild(d);
+}
+
+function run(raw){
+  const input=raw.trim();
+  echo(input);
+  if(!input) return prompt();
+  hist.unshift(input);hIdx=-1;
+  const parts=input.toLowerCase().split(/\s+/);
+  let cmd=parts[0],arg=parts.slice(1).join(" ");
+
+  if(cmd==='clear'){feed.innerHTML='';return prompt();}
+  if(cmd==='banner'){drawBanner();return prompt();}
+  if(cmd==='neofetch'||cmd==='fetch'){return typeLines(neofetch(),prompt);}
+  if(cmd==='uptime'){return typeLines([L("up "+uptimeStr()+" · session clean","hot")],prompt);}
+  if(cmd==='date'){return typeLines([L(new Date().toString(),"dim")],prompt);}
+  if(cmd==='pwd'){return typeLines([L("/home/hammad")],prompt);}
+  if(cmd==='uname'){return typeLines([L("portfolio 1.0 · hand-built · no framework","dim")],prompt);}
+  if(cmd==='history'){
+    const h=hist.slice().reverse().map((c,i)=>L("  "+String(i+1).padStart(3)+"  "+c));
+    return typeLines(h.length?h:[L("nothing yet.","dim")],prompt);
+  }
+  if(cmd==='email'){
+    const addr="hammadperekar27@gmail.com";
+    navigator.clipboard&&navigator.clipboard.writeText(addr).then(
+      ()=>typeLines([L("copied to clipboard: "+addr,"hot")],prompt),
+      ()=>typeLines([R("<a href='mailto:"+addr+"'>"+addr+"</a>")],prompt));
+    if(!navigator.clipboard) typeLines([R("<a href='mailto:"+addr+"'>"+addr+"</a>")],prompt);
+    return;
+  }
+  if(cmd==='matrix'){ return typeLines([L(toggleRain()?"rain on. type  matrix  again to stop.":"rain off.","hot")],prompt); }
+  if(cmd==='theme'){
+    const ok=['green','amber','ice','paper'];
+    if(ok.includes(arg)){
+      document.body.dataset.theme=arg;
+      try{localStorage.setItem('phosphor',arg);}catch(e){}
+      return typeLines([L("phosphor set to "+arg+".","hot")],prompt);
+    }
+    return typeLines([L("usage: theme green | amber | ice | paper","dim")],prompt);
+  }
+  if((cmd==='open'||cmd==='cat')&&arg){
+    let k=arg.replace(/^projects\//,'').replace(/\.(txt|md|log|conf|card|db)$/,'');
+    if(ALIASES[k])k=ALIASES[k];
+    if(k==='ehosting'||k==='datafort')k='ehdf';
+    if(DATA[k]) return typeLines(DATA[k],prompt);
+    return typeLines([L(cmd+": "+arg+": no such record. try  ls","alert")],prompt);
+  }
+  if(cmd==='rm') return typeLines([L("read-only session. nice try.","alert")],prompt);
+  if(ALIASES[cmd])cmd=ALIASES[cmd];
+  if(DATA[cmd]) return typeLines(DATA[cmd],prompt);
+  typeLines([L(esc(parts[0])+": command not found","alert"),L("type  help  for the list","dim")],prompt);
+}
+
+/* ---------------- prompt ---------------- */
+let line,mirror,ghost,caret,input;
+function prompt(){
+  line=document.createElement('div');line.id='inputLine';
+  line.innerHTML='<span class="prompt">hammad@portfolio:~$</span>'
+    +'<span class="typed" id="mirror"></span><span class="ghost" id="ghost"></span><span class="caret"></span>';
+  input=document.createElement('input');
+  input.id='cmd';input.autocomplete='off';input.spellcheck=false;
+  input.setAttribute('autocapitalize','off');input.setAttribute('autocorrect','off');
+  input.setAttribute('aria-label','Terminal input');
+  line.appendChild(input);feed.appendChild(line);
+  mirror=line.querySelector('#mirror');ghost=line.querySelector('#ghost');caret=line.querySelector('.caret');
+  input.addEventListener('input',()=>{mirror.textContent=input.value;hint();toBottom();});
+  input.addEventListener('keydown',onKey);
+  input.focus({preventScroll:true});toBottom();
+}
+function suggest(){
+  const s=input.value.trim().toLowerCase();
+  if(!s||/\s/.test(input.value.trim())) return null;
+  return NAMES.filter(n=>n.startsWith(s)&&n!==s).sort((a,b)=>a.length-b.length)[0]||null;
+}
+function hint(){ const s=suggest(); ghost.textContent=s?s.slice(input.value.trim().length):''; }
+function retire(){
+  if(!line)return;
+  input.removeEventListener('keydown',onKey);
+  input.remove();caret.remove();ghost.remove();
+  line.id='';line.classList.add('line');line=null;
+}
+function onKey(e){
+  if(e.key==='Enter'){e.preventDefault();const v=input.value;retire();return run(v);}
+  if((e.ctrlKey||e.metaKey)&&e.key==='l'){e.preventDefault();retire();feed.innerHTML='';return prompt();}
+  if(e.key==='ArrowUp'){e.preventDefault();
+    if(hIdx<hist.length-1){hIdx++;input.value=hist[hIdx];mirror.textContent=input.value;hint();}return;}
+  if(e.key==='ArrowDown'){e.preventDefault();
+    if(hIdx>0){hIdx--;input.value=hist[hIdx];}else{hIdx=-1;input.value='';}
+    mirror.textContent=input.value;hint();return;}
+  if(e.key==='Tab'||(e.key==='ArrowRight'&&input.selectionStart===input.value.length)){
+    const s=suggest();if(!s)return;
+    e.preventDefault();input.value=s;mirror.textContent=s;hint();return;}
+}
+
+/* ---------------- matrix rain ---------------- */
+let rainOn=false,rainRAF=null;
+function toggleRain(){
+  const cv=document.getElementById('rain');
+  rainOn=!rainOn;cv.classList.toggle('on',rainOn);
+  if(!rainOn){cancelAnimationFrame(rainRAF);rainRAF=null;return false;}
+  if(still){return true;}
+  const ctx=cv.getContext('2d');
+  let cols,drops,fs=16,dpr=Math.min(devicePixelRatio||1,2);
+  const glyphs="01ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉABCDEF#$%&*+=";
+  function size(){
+    cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;
+    cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    cols=Math.ceil(innerWidth/fs);drops=Array.from({length:cols},()=>Math.random()*-40);
+  }
+  size();addEventListener('resize',size);
+  const hot=getComputedStyle(document.body).getPropertyValue('--hot').trim()||'#3BE07A';
+  let t0=0;
+  (function frame(t){
+    if(!rainOn)return;
+    if(t-t0>55){
+      t0=t;
+      ctx.fillStyle='rgba(0,0,0,.09)';ctx.fillRect(0,0,innerWidth,innerHeight);
+      ctx.font=fs+'px monospace';ctx.fillStyle=hot;
+      for(let i=0;i<cols;i++){
+        ctx.fillText(glyphs[(Math.random()*glyphs.length)|0],i*fs,drops[i]*fs);
+        if(drops[i]*fs>innerHeight&&Math.random()>.977)drops[i]=0;
+        drops[i]++;
+      }
+    }
+    rainRAF=requestAnimationFrame(frame);
+  })(0);
+  return true;
+}
+
+/* ---------------- boot ---------------- */
+function progress(done){
+  const node=el('dim');feed.appendChild(node);
+  const W=28;let p=0;
+  (function step(){
+    if(skip)p=100;
+    const f=Math.round(W*p/100);
+    node.textContent="  ["+"█".repeat(f)+"░".repeat(W-f)+"] "+String(p).padStart(3)+"%  verifying credentials";
+    toBottom();
+    if(p>=100){node.classList.remove('dim');node.classList.add('hot');
+      node.textContent="  ["+"█".repeat(W)+"] 100%  credentials verified";return done();}
+    p=Math.min(100,p+(6+Math.random()*16));
+    setTimeout(step,still?0:55);
+  })();
+}
+function boot(){
+  drawBanner();
+  typeLines([L("initialising session …","dim")],()=>{
+    progress(()=>{
+      typeLines([
+        L("vault unlocked · access granted","hot"),
+        L(""),
+        L("Welcome. This is a working shell — type a command and press enter."),
+        L("Start with  help  , or  neofetch  for the card version.","dim"),
+        L("2,000+ servers at a bank, eleven ARCON certifications — see  projects  and  certs","dim"),
+        L("")
+      ],()=>{ prompt(); deepLink(); });
+    });
+  });
+}
+function deepLink(){
+  const h=decodeURIComponent(location.hash.replace('#','')).trim().toLowerCase();
+  if(!h)return;
+  if(DATA[h]||ALIASES[h]||['neofetch','timeline','whois','netstat'].includes(h)){
+    retire();run(h);
+  }
+}
+
+/* focus + skip */
+document.addEventListener('click',e=>{
+  if(e.target.closest('.chip')||e.target.closest('a'))return;
+  if(typing)skip=true;
+  input&&input.focus({preventScroll:true});
+});
+document.addEventListener('keydown',e=>{
+  if(typing&&!e.metaKey&&!e.ctrlKey)skip=true;
+  if(input&&document.activeElement!==input&&e.key.length===1)input.focus({preventScroll:true});
+});
+document.querySelectorAll('.chip').forEach(b=>{
+  b.addEventListener('click',()=>{
+    if(typing){skip=true;return;}
+    if(!line)return;
+    const v=b.dataset.cmd;retire();run(v);
+  });
+});
+
+/* clock + uptime */
+(function(){
+  const c=document.getElementById('clock'),u=document.getElementById('uptime');
+  const tick=()=>{
+    c.textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Muscat',hour12:false})+' GST';
+    u.textContent='up '+uptimeStr();
+  };
+  tick();setInterval(tick,1000);
+})();
+
+/* dock sizing + saved theme */
+(function(){
+  const dock=document.querySelector('.dock');
+  const set=()=>document.documentElement.style.setProperty('--dock',dock.offsetHeight+'px');
+  set();addEventListener('resize',set);
+  try{const t=localStorage.getItem('phosphor');if(t)document.body.dataset.theme=t;}catch(e){}
+})();
+
+boot();
+})();
+</script>
+</body>
+</html>
